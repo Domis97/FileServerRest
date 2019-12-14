@@ -1,5 +1,6 @@
 package storage;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,10 +28,27 @@ public class StorageControl {
         return storageService.loadAsResource(filename, current);
     }
 
-    public boolean uploadFile(MultipartFile uploadfile,String userID) {
+    public boolean deleteFile(String fileName, String userID)  {
+        locationGetter("", userID);
+        System.out.println(current.toString() + "\\" + fileName);
+        File file = new File(current.toString() + "\\" + fileName);
+        if (checkIfDirectory(fileName)) {
+            try {
+                FileUtils.deleteDirectory(file);
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else
+            return file.delete();
+    }
+
+    public boolean uploadFile(MultipartFile uploadfile, String userID) {
 
         try {
-            locationGetter("",userID);
+            locationGetter("", userID);
             String directory = current.toString();
             String filename = uploadfile.getOriginalFilename();
             String filepath = Paths.get(directory, filename).toString();
@@ -40,7 +58,7 @@ public class StorageControl {
             stream.write(uploadfile.getBytes());
             stream.close();
             return true;
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -61,7 +79,7 @@ public class StorageControl {
         HashMap<String, ArrayList> res = new HashMap<>();
         ArrayList<String> dirs = new ArrayList<>();
         ArrayList<String> files = new ArrayList<>();
-        List<String> temp = storageService.loadAll(current,userID).map(path -> {
+        List<String> temp = storageService.loadAll(current, userID).map(path -> {
             if (!checkIfDirectory(path.toString())) {
                 return ("f" + path.toString());
             } else {
@@ -101,7 +119,7 @@ public class StorageControl {
                 temp = StorageProperties.getInstance().getSessionLocation(userID);
             }
             current = Paths.get(rootLoc + temp);
-            return "";
+            return temp;
         } else if (location.contains("rev")) {
             if (StorageProperties.getInstance().getSessionLocation(userID).equals("ERROR")) {
                 temp = StorageProperties.getInstance().updateSessionLocation(userID, null);

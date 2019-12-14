@@ -33,26 +33,18 @@ public class RestApiController {
 
     private StorageControl storageController = new StorageControl();
 
-    @RequestMapping("/list")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public JsonStorageStructure StorageList(@RequestParam(value = "path", defaultValue = "") String path, @RequestParam(value = "userID") String userID) {
-        System.out.println("List files for user: "+userID + " in dir:"+path +"\n");
+        System.out.println("List files for user: " + userID + " in dir:" + path + "\n");
         HashMap<String, ArrayList> res = storageController.dirList(path, userID);
         return new JsonStorageStructure(userID, storageController.locationGetter("", userID),
                 res.get("Directories"), res.get("Files"));
     }
 
-    @RequestMapping("/file")
-    public ResponseEntity<Resource> serveFiles(@RequestParam(value = "filename") String filename, @RequestParam(value = "userID") String userID) {
-        System.out.println("User named: "+userID +" want to download file:"+filename +"\n");
-        StorageControl storageController = new StorageControl();
-        Resource file = storageController.reqFile(filename, userID);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-    }
 
-    @RequestMapping("/directory")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
     public String createDirectory(@RequestParam(value = "folderName") String folderName, @RequestParam(value = "userID") String userID) {
-        System.out.println("Create folder named: "+folderName+" for user: "+userID +"\n");
+        System.out.println("Create folder named: " + folderName + " for user: " + userID + "\n");
         StorageControl storageController = new StorageControl();
         if (storageController.createDir(folderName, userID))
             return "succes";
@@ -61,18 +53,39 @@ public class RestApiController {
     }
 
 
+    @RequestMapping(value = "/file", method = RequestMethod.GET)
+    public ResponseEntity<Resource> serveFiles(@RequestParam(value = "fileName") String filename, @RequestParam(value = "userID") String userID) {
+        System.out.println("User named: " + userID + " want to download file:" + filename + "\n");
+        StorageControl storageController = new StorageControl();
+        Resource file = storageController.reqFile(filename, userID);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/file", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> upload(
-            @RequestParam("file") MultipartFile file,@RequestParam(value = "userID") String userID
-    ) {
-        System.out.println("User named: "+userID+" want to upload file: "+file.getOriginalFilename());
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam(value = "userID") String userID) {
+        System.out.println("User named: " + userID + " want to upload file: " + file.getOriginalFilename());
         try {
             StorageControl storageControl = new StorageControl();
-            storageControl.uploadFile(file,userID);
+            storageControl.uploadFile(file, userID);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        catch (Exception e) {
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/file", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<?> delete(@RequestParam("fileName") String fileName, @RequestParam(value = "userID") String userID) {
+        System.out.println("User named: " + userID + " want to delete file: " + fileName);
+        try {
+            StorageControl storageControl = new StorageControl();
+            boolean result = storageControl.deleteFile(fileName, userID);
+            System.out.println("\n"+result+"\n");
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
