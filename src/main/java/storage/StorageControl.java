@@ -45,17 +45,17 @@ public class StorageControl {
             return file.delete();
     }
 
-    public boolean uploadFile(MultipartFile uploadfile, String userID) {
+    public boolean uploadFile(MultipartFile uploadFile, String userID) {
 
         try {
             locationGetter("", userID);
             String directory = current.toString();
-            String filename = uploadfile.getOriginalFilename();
+            String filename = uploadFile.getOriginalFilename();
             String filepath = Paths.get(directory, filename).toString();
 
             BufferedOutputStream stream =
                     new BufferedOutputStream(new FileOutputStream(new File(filepath)));
-            stream.write(uploadfile.getBytes());
+            stream.write(uploadFile.getBytes());
             stream.close();
             return true;
         } catch (IOException e) {
