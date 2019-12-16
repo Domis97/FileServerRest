@@ -3,6 +3,8 @@ package storage;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
+import storage.database.Db_api;
+import storage.database.Db_conn;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -11,6 +13,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +32,8 @@ public class StorageControl {
         return storageService.loadAsResource(filename, current);
     }
 
-    public boolean deleteFile(String fileName, String userID)  {
+    public boolean deleteFile(String fileName, String userID) {
         locationGetter("", userID);
-        System.out.println(current.toString() + "\\" + fileName);
         File file = new File(current.toString() + "\\" + fileName);
         if (checkIfDirectory(fileName)) {
             try {
@@ -40,8 +43,7 @@ public class StorageControl {
                 e.printStackTrace();
                 return false;
             }
-        }
-        else
+        } else
             return file.delete();
     }
 
@@ -141,6 +143,23 @@ public class StorageControl {
             current = Paths.get(rootLoc + temp);
             return rev;
         }
+    }
+
+    public boolean isUserRegistered(String userName, String log, Connection connection) {
+        Db_api db_api = new Db_api();
+        try {
+            if (connection.isClosed())
+                connection = Db_conn.getInstance().connect();
+            if (db_api.function_select_user(userName, connection)) {
+                db_api.procedure_add_log(userName, log, connection);
+                return true;
+            } else
+                return false;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void setCurrent(Path current) {
