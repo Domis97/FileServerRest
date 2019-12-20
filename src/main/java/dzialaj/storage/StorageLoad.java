@@ -1,9 +1,9 @@
-package storage;
+package dzialaj.storage;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import storage.exceptions.StorageException;
-import storage.exceptions.StorageFileNotFoundException;
+import dzialaj.storage.exceptions.StorageException;
+import dzialaj.storage.exceptions.StorageFileNotFoundException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

@@ -1,9 +1,9 @@
-package restServer;
+package dzialaj;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import storage.database.Db_api;
-import storage.database.Db_conn;
+import dzialaj.storage.database.Db_api;
+import dzialaj.storage.database.Db_conn;
 
 import java.util.Scanner;
 
@@ -25,8 +25,7 @@ public class Application {
         if (choice==1){
 			System.out.println("\nPodaj googleID usera : \n");
 			String userID = in.next();
-			Db_api db_api = new Db_api();
-			db_api.procedure_add_user(userID, Db_conn.getInstance().connect());
+			Db_api.getInstance().procedure_add_user(userID, Db_conn.getInstance().connect());
 		}
         addUser();
 	}

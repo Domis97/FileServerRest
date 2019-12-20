@@ -1,4 +1,4 @@
-package storage.database;
+package dzialaj.storage.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,6 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Db_api {
+
+    private static Db_api ourInstance = new Db_api();
+
+    private Db_api() {}
+
+    public static Db_api getInstance() {
+        return ourInstance;
+    }
+
     public String function_get_user_location(String userName, Connection conn) {
 
 
@@ -32,7 +41,6 @@ public class Db_api {
         }
     }
 
-
     public void procedure_add_user(String userName, Connection conn) {
 
         PreparedStatement preparedStatement = null;
@@ -44,7 +52,7 @@ public class Db_api {
         }
     }
 
-    public void procedure_add_log(String userName,String log, Connection conn) {
+    public void procedure_add_log(String userName, String log, Connection conn) {
 
         PreparedStatement preparedStatement = null;
         try {

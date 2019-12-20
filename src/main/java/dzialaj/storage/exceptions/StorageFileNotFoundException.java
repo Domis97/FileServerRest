@@ -1,4 +1,4 @@
-package storage.exceptions;
+package dzialaj.storage.exceptions;
 
 public class StorageFileNotFoundException extends StorageException {
 

@@ -1,4 +1,4 @@
-package restServer;
+package dzialaj.restServer;
 
 import java.util.ArrayList;
 

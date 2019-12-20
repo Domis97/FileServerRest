@@ -1,4 +1,5 @@
 /FileServer.iml
 /target/
 /src/test/
-/src/main/java/storage/database/Db_credentials.java
+/src/main/java/dzialaj/storage/database/Db_credentials.java
+/src/main/java/dzialaj/GoogleAPI/GoogleSecret.java

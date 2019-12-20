@@ -1,4 +1,4 @@
-package storage.database;
+package dzialaj.storage.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
